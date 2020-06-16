@@ -1,0 +1,60 @@
+project_name: rackjobber
+before:
+  hooks:
+    - go get -v -d ./...
+    - go generate ./...
+    - go get github.com/keybase/go-keychain
+
+release:
+  prerelease: true
+  github:
+    owner: worldiety
+    name: rackjobber
+
+builds:
+- env:
+  - CGO_ENABLED=0
+- id: rackjobber-windows-64
+  goos: [windows]
+  goarch: [amd64]
+- id: rackjobber-windows-32
+  goos: [windows]
+  goarch: [386]
+
+archives:
+- 
+  id: archives
+
+  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+  replacements:
+    amd64: 64-bit
+    386: 32-bit
+    darwin: macOS
+    linux:  Linux
+    windows: Windows
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+
+brews:
+  - name: rackjobber
+    github:
+      owner: worldiety
+      name: rackjobber
+    commit_author:
+      name: worldiety
+      email: info@worldiety.com
+    folder: Formula
+    homepage: https://worldiety.de/
+    description: CI-Tool for shopware plugin versioning
